@@ -1,0 +1,55 @@
+/*
+ * Analog_Digital.cpp
+ *
+ * Created: 01.11.2023 11:18:01
+ * Author : Andreas Ekeberg Syversen
+ */ 
+
+#include <avr/io.h>
+#include <util/delay.h>
+
+void ADC_Init() {
+    ADMUX = (1 << REFS0) | (1 << REFS1); // Setter AREF som referansespenningskilde
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1); 
+    DDRD |= (1 << PD6);
+}
+//Leser verdi
+uint16_t ADC_Read() {
+	
+	ADCSRA |= (1 << ADSC);
+
+	
+	while (ADCSRA & (1 << ADSC));
+
+	
+	uint16_t result = ADC;
+
+	return result;
+}
+
+void LED_SetBrightness(uint8_t brightness) {
+	
+	OCR0A = brightness;
+}
+
+int main() {
+	
+	ADC_Init();
+
+	
+	TCCR0A = (1 << WGM00) | (1 << WGM01) | (1 << COM0A1);
+	TCCR0B = (1 << CS00);
+
+	while (1) {
+		
+		uint16_t adcValue = ADC_Read();
+
+		
+		uint8_t brightness = adcValue / 4; 
+
+	
+		LED_SetBrightness(brightness);
+	}
+	
+	return 0;
+}
