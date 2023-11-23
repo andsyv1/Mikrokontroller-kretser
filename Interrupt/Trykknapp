@@ -1,0 +1,33 @@
+/*
+ * Interrupt.cpp
+ *
+ * Created: 28.10.2023 10:32:58
+ * Author : Andreas Ekeberg Syversen
+ */ 
+
+
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define buttonPin 0   // Knappens inngangspinne (PD2)
+#define ledPin 6      // LED-utgangspinne (PD6)
+
+void setup() {
+	DDRD &= ~(1 << buttonPin); // Sett knappen som inngang (clear bit)
+	DDRD |= (1 << ledPin);     // Sett LED-en som utgang (set bit)
+	PORTD |= (1 << buttonPin); //Port D
+}
+
+int main() {
+	setup();
+
+	while (1) {
+		if (PIND & (1 << buttonPin)) {
+			PORTD |= (1 << ledPin); // Slå på LED hvis knappen er trykket
+			} else {
+			PORTD &= ~(1 << ledPin); // Slå av LED hvis knappen ikke er trykket
+		}
+	}
+
+	return 0;
+}
